@@ -491,7 +491,8 @@ def monkeypatch(
     module: _torch.nn.Module,
     device: _typing.Optional[_torch.device] = None,
     copy_initial_weights: bool = True,
-    track_higher_grads: bool = True
+    track_higher_grads: bool = True,
+    in_place: bool = False,
 ) -> _MonkeyPatchBase:
     r"""Create a monkey-patched stateless version of a module.
 
@@ -529,8 +530,13 @@ def monkeypatch(
     def encapsulator(
         fmodule: _MonkeyPatchBase, module: _torch.nn.Module
     ) -> None:
-        if copy_initial_weights:
+        if copy_initial_weights and not in_place:
             params = _utils.get_func_params(module, device=device)
+        elif in_place:
+            params = [
+                p if device is None else p.to(device)
+                for p in module.parameters()
+            ]
         else:
             params = [
                 p.clone() if device is None else p.clone().to(device)

@@ -33,10 +33,11 @@ def innerloop_ctx(
     device: _typing.Optional[_torch.device] = None,
     copy_initial_weights: bool = True,
     override: optim._OverrideType = None,
-    track_higher_grads: bool = True
+    track_higher_grads: bool = True,
+    in_place: bool = False,
 ):
     r"""A context manager for writing differentiable inner loops.
-
+https://github.com/kage08/higher.git
     Args:
         model: a ``torch.nn.Module`` subclass instance.
         opt: an existing optimizer, assumed to be an instance of
@@ -86,7 +87,8 @@ def innerloop_ctx(
         model, 
         device, 
         copy_initial_weights=copy_initial_weights,
-        track_higher_grads=track_higher_grads
+        track_higher_grads=track_higher_grads,
+        in_place=in_place,
     )
     diffopt = optim.get_diff_optim(
         opt,
